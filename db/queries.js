@@ -40,11 +40,18 @@ module.exports = {
       });
     },
 
-    update: function(id, body) {
-      return Movie.forge({ id: id })
+    update: function(query) {
+      return Movie.forge({ id: query.movie_id })
         .fetch()
         .then(function(movie) {
-          return movie.save(body);
+          return movie.save({
+            movie_id: query.id,
+            title: query.title,
+            description: query.description,
+            year: query.year,
+            image_url: query.image_url,
+            rating: query.rating
+          });
         });
     },
 
