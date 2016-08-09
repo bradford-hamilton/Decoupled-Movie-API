@@ -70,7 +70,8 @@ router.post('/login', function (request, response) {
             });
           } else {
             response.json({
-              token: token
+              token: token,
+              userId: user.attributes.id
             });
           }
         });

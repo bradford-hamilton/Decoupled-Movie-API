@@ -95,7 +95,7 @@ router.get('/', function(request, response, next) {
  */
 
 router.get('/:id', function(request, response, next) {
-  db.Movie.get(request.params.id)
+  db.User.get(request.params.id)
   .then(function(data) {
     modify.removeSensitiveInfoFromOne(data)
   .then(function(data) {
@@ -123,11 +123,14 @@ router.get('/:id', function(request, response, next) {
  */
 
 router.post('/', function(request, response, next) {
-  db.Movie.insert(request.body)
-  .then(function(data) {
-    var message = data.attributes.title + ' was inserted successfully!';
-    response.json({
-      message: message
+    db.Movie.insert(request.query)
+    .then(function(data) {
+    db.Movie.insertIntoJoin(data, request.query)
+    .then(function(data) {
+      var message = data.attributes.title + ' was inserted successfully!';
+      response.json({
+        message: message
+      });
     });
   });
 });
@@ -173,7 +176,7 @@ router.put('/:id', function(request, response, next) {
  */
 
 router.delete('/:id', function(request, response, next) {
-  db.Movie.destroy(request.params.id)
+  db.Movie.destroy(request.query.user_id, request.query.movie_id)
   .then(function(data) {
     response.json({
       message: 'Successfully removed movie!'

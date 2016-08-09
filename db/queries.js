@@ -24,7 +24,20 @@ module.exports = {
     },
 
     insert: function(formData) {
-      return Movie.forge().save(formData);
+      return Movie.forge().save({
+        description: formData.description,
+        image_url: formData.image_url,
+        rating: formData.rating,
+        title: formData.title,
+        year: formData.year
+      });
+    },
+
+    insertIntoJoin: function(data, queryData) {
+      return User_Movie.forge().save({
+        user_id: queryData.user_id,
+        movie_id: data.id
+      });
     },
 
     update: function(id, body) {
@@ -35,18 +48,34 @@ module.exports = {
         });
     },
 
-    destroy: function(id) {
-      return User_Movie.where({ movie_id: id })
-        .destroy()
-        .then(function() {
-          return Movie.where({ id: id })
-          .destroy();
-        });
+    destroy: function(user_id, movie_id) {
+      return User_Movie.where({
+        movie_id: movie_id,
+        user_id: user_id
+      })
+      .destroy();
     }
 
   },
 
   User: {
+
+    get: function(id){
+      if (id) {
+        return User.where({ id: id })
+          .fetch({ withRelated: 'movies' })
+          .then(function(collection) {
+            return collection.toJSON();
+          });
+      } else {
+        return Movie.forge()
+          .orderBy('title', 'ASC')
+          .fetchAll({ withRelated: 'users' })
+          .then(function(collection) {
+            return collection.toJSON();
+          });
+      }
+    }
 
   },
 

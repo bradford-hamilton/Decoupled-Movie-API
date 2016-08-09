@@ -17,13 +17,7 @@ module.exports = {
 
   removeSensitiveInfoFromOne: function(data) {
     return new Promise(function(resolve, reject) {
-      data.users.forEach(function(user) {
-        delete user.id;
-        delete user.password;
-        delete user._pivot_id;
-        delete user._pivot_movie_id;
-        delete user._pivot_user_id;
-      });
+      delete data.password;
       resolve(data);
     });
   }
