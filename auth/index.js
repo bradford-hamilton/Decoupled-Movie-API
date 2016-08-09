@@ -21,14 +21,14 @@ var jwt = require('jsonwebtoken');
  */
 
 router.post('/signup', function (request, response) {
-  db.findUserByUsername(request.body.username)
+  db.findUserByUsername(request.query.username)
     .then(function(user) {
       if (user) {
         response.json({
           error: 'Sorry, user already exists!'
         });
       } else {
-        auth.createUser(request.body)
+        auth.createUser(request.query)
         .then(function(id) {
           response.json({
             message: 'Successfully created credentials!'
@@ -55,9 +55,9 @@ router.post('/signup', function (request, response) {
  */
 
 router.post('/login', function (request, response) {
-  db.findUserByUsername(request.body.username)
+  db.findUserByUsername(request.query.username)
     .then(function(user) {
-      var plainTextPassword = request.body.password;
+      var plainTextPassword = request.query.password;
 
       if ( user && bcrypt.compareSync(plainTextPassword, user.attributes.password) ) {
         delete user.attributes.password;
